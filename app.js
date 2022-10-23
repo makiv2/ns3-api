@@ -1,22 +1,38 @@
-import express from 'express';
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const app = express();
+require("dotenv").config();
 
 
-//init app 
+//Middleware
+app.use(bodyParser.json());
+app.use(cors());
 
-const app = express()
 
+//Import Routers
+const postsRoute = require("./routes/posts");
+const userRoute = require("./routes/user");
+
+app.use("/posts", postsRoute);
+app.use("/user", userRoute);
+
+//Routes
+app.get("/", (req, res) => {
+    res.send("We are on home");
+});
+
+
+//Connect to DB
+mongoose.connect(
+    process.env.DB_CONNECTION,
+    { useNewUrlParser: true, useUnifiedTopology: true, dbName: "NS3" },
+    () => 
+    console.log('connected!')
+);
+
+//Listning to port 3000
 app.listen(3000, () => {
-    console.log(
-        'app listning on port 3000'
-    )
-})
-
-
-// routes
-
-app.get('/test', (req, res) => {
-    res.json({mssg: "Welcome to the api"})
-})
-
-
-
+  console.log("Listening on port 3000");
+});
